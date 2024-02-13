@@ -3,83 +3,29 @@
  * на сервер.
  * */
 const createRequest = (options = {}) => {
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+    let url = options.url;
+    formData = new FormData();
+    xhr.onload = function() {
+        options.callback(null, xhr.response);
+        
+    }
     if(options.method === 'GET') {
-        const xhr = new XMLHttpRequest();
-        xhr.responseType = 'json';
-        xhr.onload = function() {
-            options.callback(null, xhr.response);
-        }
-        try {
-            if(options.data) {
-                xhr.open(options.method, `${options.url}?mail=${options.data.email}&password=${options.data.password}`);
-                xhr.send();
-            } else {
-                xhr.open(options.method, `${options.url}`);
-                xhr.send();
+        if(options.data) {
+            url += '?';
+            for(let key in options.data) {
+                url += `${key}=${options.data[key]}&`;
             }
-            
-        } 
-        catch(e) {
-            options.callback(e, null);
+            url = url.slice(0, -1);
         }
-        
-    }
-    if(options.method === 'POST') {
-        const xhr = new XMLHttpRequest(),
-        formData = new FormData();
-        formData.append( 'mail',  options.data.email);
-        formData.append( 'password', options.data.password );
-        
-        xhr.onload = function() {
-            options.callback(null, xhr.response);
+        xhr.open('GET', url);
+        xhr.send()
+    } else {
+        for(let key in options.data) {
+            formData.append( key,  options.data[key]);
         }
-        xhr.responseType = 'json';
-        try {
-            xhr.open(options.method, options.url);
-            xhr.send(formData);
-        }
-        catch(e) {  
-            options.callback(e, null)
-        }
-        
-    }
-    if(options.method === 'PUT') {
-        const xhr = new XMLHttpRequest(),
-        formData = new FormData();
-        formData.append( 'mail',  options.data.email);
-        formData.append( 'password', options.data.password );
-        
-        xhr.onload = function() {
-            options.callback(null, xhr.response);
-        }
-        xhr.responseType = 'json';
-        try {
-            xhr.open(options.method, options.url);
-            xhr.send(formData);
-        }
-        catch(e) {  
-            options.callback(e, null)
-        }
-        
-    }
-    if(options.method === 'DELETE') {
-        const xhr = new XMLHttpRequest(),
-        formData = new FormData();
-        formData.append( 'mail',  options.data.email);
-        formData.append( 'password', options.data.password );
-        
-        xhr.onload = function() {
-            options.callback(null, xhr.response);
-        }
-        xhr.responseType = 'json';
-        try {
-            xhr.open(options.method, options.url);
-            xhr.send(formData);
-        }
-        catch(e) {  
-            options.callback(e, null)
-        }
-        
-    }
-    
+        xhr.open(options.method, url);
+        xhr.send(formData)
+    }  
 };
