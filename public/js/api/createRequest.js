@@ -19,13 +19,17 @@ const createRequest = (options = {}) => {
             }
             url = url.slice(0, -1);
         }
-        xhr.open('GET', url);
-        xhr.send()
     } else {
         for(let key in options.data) {
             formData.append( key,  options.data[key]);
         }
+        
+    }
+    try {
         xhr.open(options.method, url);
-        xhr.send(formData)
-    }  
+        xhr.send(formData);  
+    } catch(error) {
+        options.callback(error, null);
+    }
+    
 };
