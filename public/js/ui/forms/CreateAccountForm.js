@@ -9,8 +9,14 @@ class CreateAccountForm extends AsyncForm {
    * и сбрасывает форму
    * */
   onSubmit(data) {
-    Account.create();
+    Account.create(data, function(err, response) {
+      if(response.success) {
+        this.element.style.display = 'none';
+        this.element.clear();
+        App.update();
+      }
+    });
     
-    App.update();
+    
   }
 }

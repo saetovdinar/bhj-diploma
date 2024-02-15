@@ -40,7 +40,7 @@ class AsyncForm {
    * */
   getData() {
     const formData = new FormData(this.element);
-    return JSON.stringify(formData);
+    return Object.fromEntries(formData.entries());
   }
 
   onSubmit(options){

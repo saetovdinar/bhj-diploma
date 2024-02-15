@@ -12,7 +12,10 @@ class UserWidget {
    * необходимо выкинуть ошибку.
    * */
   constructor(element){
-
+    if(!element) {
+      throw new Error('Elemet is not created!')
+    }
+    this.element = element;
   }
 
   /**
@@ -23,6 +26,6 @@ class UserWidget {
    * авторизованного пользователя
    * */
   update(){
-
+    this.element.user_name = User.current().name;
   }
 }

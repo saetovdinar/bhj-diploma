@@ -14,7 +14,12 @@ class AccountsWidget {
    * необходимо выкинуть ошибку.
    * */
   constructor( element ) {
-
+    if(!element) {
+      throw new Error('Empty element!');
+    }
+    this.element = element;
+    this.registerEvents();
+    this.update();
   }
 
   /**
@@ -25,7 +30,13 @@ class AccountsWidget {
    * вызывает AccountsWidget.onSelectAccount()
    * */
   registerEvents() {
-
+    document.querySelector('.create-account').addEventListener('click', function(event) {
+      event.preventDefault();
+      App.getModal('createAccount').open();
+    })
+    document.querySelectorAll('account').forEach((item) => {
+      item.addEventListener('click', this.onSelectAccount.bind(this))
+    })
   }
 
   /**
@@ -58,8 +69,12 @@ class AccountsWidget {
    * счёта класс .active.
    * Вызывает App.showPage( 'transactions', { account_id: id_счёта });
    * */
-  onSelectAccount( element ) {
-
+  onSelectAccount(e) {
+    e.preventDefault();
+    document.querySelectorAll('account').forEach((item) => {
+      item.classList.remove('active');
+    })
+    e.target.classList.add('active');
   }
 
   /**
