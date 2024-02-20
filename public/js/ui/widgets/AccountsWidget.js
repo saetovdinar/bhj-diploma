@@ -19,7 +19,7 @@ class AccountsWidget {
     }
     this.element = element;
     this.registerEvents();
-    this.update();
+
   }
 
   /**
@@ -30,12 +30,14 @@ class AccountsWidget {
    * вызывает AccountsWidget.onSelectAccount()
    * */
   registerEvents() {
-    document.querySelector('.create-account').addEventListener('click', function(event) {
+    this.element.addEventListener('click', function(event) {
       event.preventDefault();
-      App.getModal('createAccount').open();
-    })
-    document.querySelectorAll('account').forEach((item) => {
-      item.addEventListener('click', this.onSelectAccount.bind(this))
+      if(event.target.classList.contains('.create-account')) {
+        App.getModal('createAccount').open();
+      }
+      if(event.target.closest('li').classList.contains('account')) {
+        AccountsWidget.onSelectAccount(event)
+      }
     })
   }
 
@@ -50,7 +52,15 @@ class AccountsWidget {
    * метода renderItem()
    * */
   update() {
+    if(User.current()) {
+      Account.list(null, (err, response)=>{
+        if(response && response.success) {
+          this.clear();
+          this.renderItem(response)
 
+        }
+      })
+    }
   }
 
   /**
@@ -59,7 +69,9 @@ class AccountsWidget {
    * в боковой колонке
    * */
   clear() {
-
+    this.element.querySelectorAll('.account').forEach((item)=>{
+      item.remove()
+    })
   }
 
   /**
@@ -83,7 +95,14 @@ class AccountsWidget {
    * item - объект с данными о счёте
    * */
   getAccountHTML(item){
-
+    let parsedData = JSON.parse(item)
+    let HtmlCode = `<li class="active account" data-id="${parsedData.id}">
+                      <a href="#">
+                        <span>${parsedData.name}</span> /
+                        <span>${parsedData.sum} ₽</span>
+                      </a>
+                    </li>`
+    return HtmlCode;
   }
 
   /**
@@ -93,6 +112,12 @@ class AccountsWidget {
    * и добавляет его внутрь элемента виджета
    * */
   renderItem(data){
-
+    const updatedData = data.map((item)=>{
+      this.getAccountHTML(item);
+    })
+    for(let value of updatedData) {
+      this.element.append(value)
+    }
+    
   }
 }

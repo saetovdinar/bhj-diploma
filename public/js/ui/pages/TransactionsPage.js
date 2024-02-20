@@ -11,7 +11,11 @@ class TransactionsPage {
    * через registerEvents()
    * */
   constructor( element ) {
-
+    if(!element) {
+      throw new Error('Elemet is not created!')
+    }
+    this.element = element;
+    this.registerEvents();
   }
 
   /**
@@ -28,7 +32,9 @@ class TransactionsPage {
    * TransactionsPage.removeAccount соответственно
    * */
   registerEvents() {
-
+    this.element.addEventListener('click', () =>{
+      
+    })
   }
 
   /**

@@ -214,7 +214,7 @@ const data = {
 };
 
 class Entity {
-// ... внутри метода create
+// ... внутри метода remove
   static remove( data, callback ) {
     console.log( data ); // { mail: 'ivan@biz.pro' }
   }
