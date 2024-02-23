@@ -30,13 +30,13 @@ class AccountsWidget {
    * вызывает AccountsWidget.onSelectAccount()
    * */
   registerEvents() {
-    this.element.addEventListener('click', function(event) {
+    this.element.addEventListener('click', (event) => {
       event.preventDefault();
       if(event.target.classList.contains('.create-account')) {
         App.getModal('createAccount').open();
       }
       if(event.target.closest('li').classList.contains('account')) {
-        AccountsWidget.onSelectAccount(event)
+        this.onSelectAccount(event)
       }
     })
   }
@@ -56,7 +56,7 @@ class AccountsWidget {
       Account.list(null, (err, response)=>{
         if(response && response.success) {
           this.clear();
-          this.renderItem(response)
+          this.renderItem(JSON.parse(response))
 
         }
       })
@@ -95,14 +95,13 @@ class AccountsWidget {
    * item - объект с данными о счёте
    * */
   getAccountHTML(item){
-    let parsedData = JSON.parse(item)
-    let HtmlCode = `<li class="active account" data-id="${parsedData.id}">
+    let htmlCode = `<li class="active account" data-id="${item.id}">
                       <a href="#">
-                        <span>${parsedData.name}</span> /
-                        <span>${parsedData.sum} ₽</span>
+                        <span>${item.name}</span> /
+                        <span>${item.sum} ₽</span>
                       </a>
                     </li>`
-    return HtmlCode;
+    return htmlCode;
   }
 
   /**

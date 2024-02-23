@@ -1,3 +1,5 @@
+const { response } = require("express");
+
 /**
  * Класс TransactionsPage управляет
  * страницей отображения доходов и
@@ -22,7 +24,7 @@ class TransactionsPage {
    * Вызывает метод render для отрисовки страницы
    * */
   update() {
-
+    this.render(this.lastOptions);
   }
 
   /**
@@ -32,8 +34,13 @@ class TransactionsPage {
    * TransactionsPage.removeAccount соответственно
    * */
   registerEvents() {
-    this.element.addEventListener('click', () =>{
-      
+    this.element.addEventListener('click', (event) =>{
+      if(event.target.classList.contains('remove-account') || event.target.closest('button').classList.contains('remove-account')) {
+        this.removeAccount();
+      }
+      if(event.target.classList.contains('transaction__remove') || event.target.closest('button').classList.contains('transaction__remove')) {
+        this.removeTransaction(this.element.querySelector('.transaction__remove').dataset.id);
+      }
     })
   }
 
@@ -47,7 +54,17 @@ class TransactionsPage {
    * для обновления приложения
    * */
   removeAccount() {
+    if(!this.lastOptions) {
+      return;
+    }
+    Account.remove(null, (err, response) => {
+      if(response && response.success) {
+        confirm('Are you sure?');
+        App.updateWidgets();
+        App.updateForms();
 
+      }
+    })
   }
 
   /**
@@ -57,7 +74,11 @@ class TransactionsPage {
    * либо обновляйте текущую страницу (метод update) и виджет со счетами
    * */
   removeTransaction( id ) {
-
+    Transaction.remove(null, (err, response) => {
+      if(response && response.success) {
+        App.update();
+      }
+    });
   }
 
   /**
@@ -67,7 +88,15 @@ class TransactionsPage {
    * в TransactionsPage.renderTransactions()
    * */
   render(options){
-
+    this.lastOptions = options;
+    Account.get(options.account_id, (err, response) => {
+      if(response && response.success) {
+        this.renderTitle(response.name);
+      }
+    });
+    Transaction.list(null, (err, response) => {
+      this.renderTransactions(response);
+    })
   }
 
   /**
@@ -76,14 +105,16 @@ class TransactionsPage {
    * Устанавливает заголовок: «Название счёта»
    * */
   clear() {
-
+    this.renderTransactions([]);
+    this.renderTitle('Название счёта');
+    this.lastOptions = {};
   }
 
   /**
    * Устанавливает заголовок в элемент .content-title
    * */
   renderTitle(name){
-
+    this.element.querySelector('.content-title').innerText = name;
   }
 
   /**
@@ -91,7 +122,9 @@ class TransactionsPage {
    * в формат «10 марта 2019 г. в 03:20»
    * */
   formatDate(date){
-
+    let formatedDate =  new Date(date);
+    let monthArr = ['Январь', 'Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
+    return `${formatedDate.getDate()} ${monthArr[formatedDate.getMonth()]} ${formatedDate.getFullYear()}г. в ${formatedDate.getHours()}:${formatedDate.getMinutes()}`
   }
 
   /**
@@ -99,7 +132,7 @@ class TransactionsPage {
    * item - объект с информацией о транзакции
    * */
   getTransactionHTML(item){
-
+    
   }
 
   /**
