@@ -56,7 +56,7 @@ class AccountsWidget {
       Account.list(null, (err, response)=>{
         if(response && response.success) {
           this.clear();
-          this.renderItem(JSON.parse(response))
+          this.renderItems(response);
 
         }
       })
@@ -95,13 +95,13 @@ class AccountsWidget {
    * item - объект с данными о счёте
    * */
   getAccountHTML(item){
-    let htmlCode = `<li class="active account" data-id="${item.id}">
+    return `<li class="active account" data-id="${item.id}">
                       <a href="#">
                         <span>${item.name}</span> /
                         <span>${item.sum} ₽</span>
                       </a>
                     </li>`
-    return htmlCode;
+    
   }
 
   /**
@@ -110,7 +110,7 @@ class AccountsWidget {
    * AccountsWidget.getAccountHTML HTML-код элемента
    * и добавляет его внутрь элемента виджета
    * */
-  renderItem(data){
+  renderItems(data){
     const updatedData = data.map((item)=>{
       this.getAccountHTML(item);
     })

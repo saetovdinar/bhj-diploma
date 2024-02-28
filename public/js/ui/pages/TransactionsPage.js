@@ -1,4 +1,4 @@
-const { response } = require("express");
+
 
 /**
  * Класс TransactionsPage управляет
@@ -57,14 +57,16 @@ class TransactionsPage {
     if(!this.lastOptions) {
       return;
     }
-    Account.remove(null, (err, response) => {
-      if(response && response.success) {
-        confirm('Are you sure?');
-        App.updateWidgets();
-        App.updateForms();
-
-      }
-    })
+    if(confirm('Are you sure?')) {
+      Account.remove(this.lastOptions, (err, response) => {
+        if(response && response.success) {
+          App.updateWidgets();
+          App.updateForms();
+        }
+      })
+      this.clear();
+    }
+    
   }
 
   /**
@@ -74,11 +76,14 @@ class TransactionsPage {
    * либо обновляйте текущую страницу (метод update) и виджет со счетами
    * */
   removeTransaction( id ) {
-    Transaction.remove(null, (err, response) => {
-      if(response && response.success) {
-        App.update();
-      }
-    });
+    if(confirm('Are you sure?')) {
+      Transaction.remove(id, (err, response) => {
+        if(response && response.success) {
+          App.update();
+        }
+      });
+    }
+    
   }
 
   /**
@@ -95,7 +100,7 @@ class TransactionsPage {
       }
     });
     Transaction.list(null, (err, response) => {
-      this.renderTransactions(response);
+      this.renderTransactions(response.account_id);
     })
   }
 
@@ -132,7 +137,52 @@ class TransactionsPage {
    * item - объект с информацией о транзакции
    * */
   getTransactionHTML(item){
-    
+    if(item.type === "income") {
+      return `<div class="transaction transaction_income row">
+      <div class="col-md-7 transaction__details">
+        <div class="transaction__icon">
+            <span class="fa fa-money fa-2x"></span>
+        </div>
+        <div class="transaction__info">
+            <h4 class="transaction__title">Новый будильник</h4>
+            <div class="transaction__date">${this.formatDate(item.created_at)}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="transaction__summ">
+            ${item.sum} <span class="currency">₽</span>
+        </div>
+      </div>
+      <div class="col-md-2 transaction__controls">
+          <button class="btn btn-danger transaction__remove" data-id="${item.id}">
+              <i class="fa fa-trash"></i>  
+          </button>
+      </div>
+  </div>`
+    }
+    if(item.type === "expense") {
+      return `<div class="transaction transaction_expense row">
+      <div class="col-md-7 transaction__details">
+        <div class="transaction__icon">
+            <span class="fa fa-money fa-2x"></span>
+        </div>
+        <div class="transaction__info">
+            <h4 class="transaction__title">Новый будильник</h4>
+            <div class="transaction__date">${this.formatDate(item.created_at)}</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="transaction__summ">
+            ${item.sum} <span class="currency">₽</span>
+        </div>
+      </div>
+      <div class="col-md-2 transaction__controls">
+          <button class="btn btn-danger transaction__remove" data-id="${item.id}">
+              <i class="fa fa-trash"></i>  
+          </button>
+      </div>
+  </div>`
+    }
   }
 
   /**
@@ -140,6 +190,8 @@ class TransactionsPage {
    * используя getTransactionHTML
    * */
   renderTransactions(data){
-
+    data.forEach((item) => {
+      this.element.querySelector('.transactions-content').append(this.getTransactionHTML(item))
+    })
   }
 }
