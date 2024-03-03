@@ -37,7 +37,7 @@ class User {
     createRequest({
       url: this.URL + '/current',
       method: 'GET',
-      callback(err, response) {
+      callback: (err, response) => {
         if(response.success) {
           this.setCurrent(response.user);
         } else {

@@ -35,10 +35,10 @@ class TransactionsPage {
    * */
   registerEvents() {
     this.element.addEventListener('click', (event) =>{
-      if(event.target.classList.contains('remove-account') || event.target.closest('button').classList.contains('remove-account')) {
+      if(event.target.closest('.remove-account')) {
         this.removeAccount();
       }
-      if(event.target.classList.contains('transaction__remove') || event.target.closest('button').classList.contains('transaction__remove')) {
+      if(event.target.closest('.transaction__remove')) {
         this.removeTransaction(this.element.querySelector('.transaction__remove').dataset.id);
       }
     })
@@ -93,15 +93,19 @@ class TransactionsPage {
    * в TransactionsPage.renderTransactions()
    * */
   render(options){
-    this.lastOptions = options;
-    Account.get(options.account_id, (err, response) => {
-      if(response && response.success) {
-        this.renderTitle(response.name);
-      }
-    });
-    Transaction.list(null, (err, response) => {
-      this.renderTransactions(response.account_id);
-    })
+    if(options) {
+      this.lastOptions = options;
+    
+      Account.get(options.account_id, (err, response) => {
+        if(response && response.success) {
+          this.renderTitle(response.name);
+        }
+      });
+      Transaction.list(null, (err, response) => {
+        this.renderTransactions(response.account_id);
+      })
+    }
+    
   }
 
   /**
@@ -137,8 +141,7 @@ class TransactionsPage {
    * item - объект с информацией о транзакции
    * */
   getTransactionHTML(item){
-    if(item.type === "income") {
-      return `<div class="transaction transaction_income row">
+      return `<div class="transaction transaction_${item.type} row">
       <div class="col-md-7 transaction__details">
         <div class="transaction__icon">
             <span class="fa fa-money fa-2x"></span>
@@ -159,30 +162,6 @@ class TransactionsPage {
           </button>
       </div>
   </div>`
-    }
-    if(item.type === "expense") {
-      return `<div class="transaction transaction_expense row">
-      <div class="col-md-7 transaction__details">
-        <div class="transaction__icon">
-            <span class="fa fa-money fa-2x"></span>
-        </div>
-        <div class="transaction__info">
-            <h4 class="transaction__title">Новый будильник</h4>
-            <div class="transaction__date">${this.formatDate(item.created_at)}</div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="transaction__summ">
-            ${item.sum} <span class="currency">₽</span>
-        </div>
-      </div>
-      <div class="col-md-2 transaction__controls">
-          <button class="btn btn-danger transaction__remove" data-id="${item.id}">
-              <i class="fa fa-trash"></i>  
-          </button>
-      </div>
-  </div>`
-    }
   }
 
   /**

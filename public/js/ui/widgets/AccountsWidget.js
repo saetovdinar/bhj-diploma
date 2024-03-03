@@ -56,8 +56,7 @@ class AccountsWidget {
       Account.list(null, (err, response)=>{
         if(response && response.success) {
           this.clear();
-          this.renderItems(response);
-
+          this.renderItems(response.data);
         }
       })
     }

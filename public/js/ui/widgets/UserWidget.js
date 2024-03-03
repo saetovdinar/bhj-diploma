@@ -27,7 +27,7 @@ class UserWidget {
    * */
   update(){
     if(User.current()) {
-      this.element.querySelector('.user_name') = User.current().name;
+      this.element.querySelector('.user-name').innerText = User.current().name;
     }
     
   }
