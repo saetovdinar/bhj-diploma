@@ -32,10 +32,10 @@ class AccountsWidget {
   registerEvents() {
     this.element.addEventListener('click', (event) => {
       event.preventDefault();
-      if(event.target.classList.contains('.create-account')) {
+      if(event.target.closest('.create-account')) {
         App.getModal('createAccount').open();
       }
-      if(event.target.closest('li').classList.contains('account')) {
+      if(event.target.closest('.account')) {
         this.onSelectAccount(event)
       }
     })
@@ -68,9 +68,15 @@ class AccountsWidget {
    * в боковой колонке
    * */
   clear() {
-    this.element.querySelectorAll('.account').forEach((item)=>{
-      item.remove()
-    })
+    this.element.innerHTML = `<li class="header">
+    Счета
+    <div class="pull-right">
+        <span class="create-account label label-success">
+            <span class="fa fa-plus"></span>
+            Новый счёт
+        </span>
+    </div>
+</li>`;
   }
 
   /**
@@ -82,10 +88,11 @@ class AccountsWidget {
    * */
   onSelectAccount(e) {
     e.preventDefault();
-    document.querySelectorAll('account').forEach((item) => {
+    this.element.querySelectorAll('.account').forEach((item) => {
       item.classList.remove('active');
     })
-    e.target.classList.add('active');
+    e.target.closest(".account").classList.add('active');
+    App.showPage( 'transactions', { account_id: e.target.closest(".account").dataset.id })
   }
 
   /**
@@ -94,7 +101,7 @@ class AccountsWidget {
    * item - объект с данными о счёте
    * */
   getAccountHTML(item){
-    return `<li class="active account" data-id="${item.id}">
+    return `<li class="account" data-id="${item.id}">
                       <a href="#">
                         <span>${item.name}</span> /
                         <span>${item.sum} ₽</span>
@@ -110,11 +117,8 @@ class AccountsWidget {
    * и добавляет его внутрь элемента виджета
    * */
   renderItems(data){
-    const updatedData = data.map((item)=>{
-      this.getAccountHTML(item);
-    })
-    for(let value of updatedData) {
-      this.element.append(value)
+    for(let value of data) {
+      this.element.innerHTML += this.getAccountHTML(value);
     }
     
   }

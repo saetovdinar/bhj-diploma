@@ -93,18 +93,21 @@ class TransactionsPage {
    * в TransactionsPage.renderTransactions()
    * */
   render(options){
-    if(options) {
+    if(!options) {
+      return;
+    }
       this.lastOptions = options;
-    
       Account.get(options.account_id, (err, response) => {
         if(response && response.success) {
-          this.renderTitle(response.name);
+          this.renderTitle(response.data.name);
         }
       });
-      Transaction.list(null, (err, response) => {
-        this.renderTransactions(response.account_id);
+      Transaction.list(options, (err, response) => {
+          console.log(response)
+          console.log(err)
+        this.renderTransactions(response);
       })
-    }
+ 
     
   }
 
@@ -170,7 +173,7 @@ class TransactionsPage {
    * */
   renderTransactions(data){
     data.forEach((item) => {
-      this.element.querySelector('.transactions-content').append(this.getTransactionHTML(item))
+      this.element.querySelector('.content').innerHTML += this.getTransactionHTML(item);
     })
   }
 }
