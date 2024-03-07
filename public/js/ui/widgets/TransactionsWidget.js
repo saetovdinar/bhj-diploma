@@ -27,10 +27,10 @@ class TransactionsWidget {
   registerEvents() {
     this.element.addEventListener('click', (event) => {
       event.preventDefault();
-      if(event.target.closest('button').classList.contains('create-income-button') || event.target.classList.contains('create-income-button')) {
+      if(event.target.closest('.create-income-button')) {
         App.getModal('newIncome').open();
       }
-      if(event.target.closest('button').classList.contains('create-expense-button') || event.target.classList.contains('create-expense-button')) {
+      if(event.target.closest('.create-expense-button')) {
         App.getModal('newExpense').open();
       }
     })

@@ -96,17 +96,15 @@ class TransactionsPage {
     if(!options) {
       return;
     }
-      this.lastOptions = options;
-      Account.get(options.account_id, (err, response) => {
-        if(response && response.success) {
-          this.renderTitle(response.data.name);
-        }
-      });
-      Transaction.list(options, (err, response) => {
-          console.log(response)
-          console.log(err)
-        this.renderTransactions(response);
-      })
+    this.lastOptions = options;
+    Account.get(options.account_id, (err, response) => {
+      if(response && response.success) {
+        this.renderTitle(response.data.name);
+      }
+    });
+    Transaction.list(options, (err, response) => {
+      this.renderTransactions(response);
+    })
  
     
   }
@@ -172,8 +170,8 @@ class TransactionsPage {
    * используя getTransactionHTML
    * */
   renderTransactions(data){
-    data.forEach((item) => {
-      this.element.querySelector('.content').innerHTML += this.getTransactionHTML(item);
+    this.element.querySelector('.content').innerHTML = data.reduce((acc, item) => {
+      return acc + this.getTransactionHTML(item);
     })
   }
 }
