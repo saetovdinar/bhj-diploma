@@ -18,10 +18,7 @@ class CreateTransactionForm extends AsyncForm {
    * */
   renderAccountsList() {
     Account.list(null, (err, response)=>{
-      this.element.querySelector('.accounts-select').innerHTML = '';
-      this.element.querySelector('.accounts-select').innerHTML = response.data.reduce((acc, item) => {
-        return acc + `<option value="${item.id}">${item.name}</option>`
-      }, '')
+      this.element.querySelector('.accounts-select').innerHTML = response.data.reduce((acc, item) =>  acc + `<option value="${item.id}">${item.name}</option>`, '')
     })
   }
 
@@ -32,11 +29,12 @@ class CreateTransactionForm extends AsyncForm {
    * в котором находится форма
    * */
   onSubmit(data) {
+
     Transaction.create(data, (err, response) => {
-      console.log(response)
-      if(response && response.succsess) {
+      if(response && response.success) {
         this.element.reset();
-        App.getModal(this.element.getAttribute("typeTran")).close();
+        
+        App.getModal(data.type === 'income' ? 'newIncome' : 'newExpense').close();
         App.update();
       }
     })

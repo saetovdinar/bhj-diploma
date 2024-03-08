@@ -9,7 +9,6 @@ const createRequest = (options = {}) => {
     formData = new FormData();
     xhr.onload = function() {
         options.callback(null, xhr.response);
-        
     }
     if(options.method === 'GET') {
         if(options.data) {

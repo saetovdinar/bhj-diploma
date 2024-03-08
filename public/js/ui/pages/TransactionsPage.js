@@ -59,6 +59,7 @@ class TransactionsPage {
     }
     if(confirm('Are you sure?')) {
       Account.remove(this.lastOptions, (err, response) => {
+        console.log(response)
         if(response && response.success) {
           App.updateWidgets();
           App.updateForms();
@@ -78,6 +79,7 @@ class TransactionsPage {
   removeTransaction( id ) {
     if(confirm('Are you sure?')) {
       Transaction.remove(id, (err, response) => {
+        console.log(response)
         if(response && response.success) {
           App.update();
         }
@@ -103,7 +105,7 @@ class TransactionsPage {
       }
     });
     Transaction.list(options, (err, response) => {
-      this.renderTransactions(response);
+      this.renderTransactions(response.data);
     })
  
     
@@ -170,8 +172,6 @@ class TransactionsPage {
    * используя getTransactionHTML
    * */
   renderTransactions(data){
-    this.element.querySelector('.content').innerHTML = data.reduce((acc, item) => {
-      return acc + this.getTransactionHTML(item);
-    })
+    this.element.querySelector('.content').innerHTML = data.reduce((acc, item) =>  acc + this.getTransactionHTML(item), '')
   }
 }
