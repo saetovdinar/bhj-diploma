@@ -18,6 +18,7 @@ class TransactionsPage {
     }
     this.element = element;
     this.registerEvents();
+ 
   }
 
   /**
@@ -39,7 +40,7 @@ class TransactionsPage {
         this.removeAccount();
       }
       if(event.target.closest('.transaction__remove')) {
-        this.removeTransaction(this.element.querySelector('.transaction__remove').dataset.id);
+        this.removeTransaction({id: this.element.querySelector('.transaction__remove').dataset.id});
       }
     })
   }
@@ -58,8 +59,7 @@ class TransactionsPage {
       return;
     }
     if(confirm('Are you sure?')) {
-      Account.remove(this.lastOptions, (err, response) => {
-        console.log(response)
+      Account.remove({id: this.lastOptions.account_id}, (err, response) => {
         if(response && response.success) {
           App.updateWidgets();
           App.updateForms();
@@ -79,7 +79,6 @@ class TransactionsPage {
   removeTransaction( id ) {
     if(confirm('Are you sure?')) {
       Transaction.remove(id, (err, response) => {
-        console.log(response)
         if(response && response.success) {
           App.update();
         }
@@ -95,6 +94,7 @@ class TransactionsPage {
    * в TransactionsPage.renderTransactions()
    * */
   render(options){
+
     if(!options) {
       return;
     }
@@ -150,7 +150,7 @@ class TransactionsPage {
             <span class="fa fa-money fa-2x"></span>
         </div>
         <div class="transaction__info">
-            <h4 class="transaction__title">Новый будильник</h4>
+            <h4 class="transaction__title">${item.name}</h4>
             <div class="transaction__date">${this.formatDate(item.created_at)}</div>
         </div>
       </div>
